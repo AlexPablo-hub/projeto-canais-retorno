@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<title>Voltando ao Estúdio · Projeto Canais</title>
+<title>Voltando ao Estúdio · Fábrica de Curtas</title>
 <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -17,9 +17,11 @@
 <script>
 // O Instagram só aceita endereço https como retorno do login. Esta página repassa o "code" e o "state" para o
 // Estúdio local; a porta vem dentro do state ("8765.<segredo>"), que o próprio Estúdio criou e confere na volta.
+// O login unificado da Meta pode não devolver o state: aí vale a porta padrão do Estúdio (8765), e é o Estúdio que
+// decide se aceita (só o último login que ele mesmo pediu, por poucos minutos). State presente e torto continua recusado.
 (function () {
   var busca = new URLSearchParams(location.search);
-  var porta = (busca.get("state") || "").split(".")[0];
+  var porta = busca.has("state") ? (busca.get("state") || "").split(".")[0] : "8765";
   if (!/^\d{2,5}$/.test(porta) || +porta > 65535) { document.querySelector("h1").textContent = "Endereço de retorno inválido"; return; }
   var destino = "http://127.0.0.1:" + porta + "/instagram/retorno" + location.search;
   document.getElementById("link").href = destino;
